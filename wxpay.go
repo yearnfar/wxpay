@@ -253,11 +253,25 @@ func RefundQuery(config WxPayConfig, params map[string]string) (resp RefundQuery
 	return
 }
 
-//
-//
-////撤销订单API接口，WxPayReverse中参数out_trade_no和transaction_id必须填写一个
-////appid、mchid、spbill_create_ip、nonce_str不需要填入
-//
-//func Reverse(config WxPayConfig, params map[string]string) (resp ReverseResponse, err error) {
-//	return
-//}
+// 支付结果通用通知
+
+func Notify(config WxPayConfig, body []byte) (resp NotifyResponse, err error) {
+	resp = NotifyResponse{}
+	err = xml.Unmarshal(body, &resp)
+	if err != nil {
+		return
+	} else if resp.ReturnCode != "SUCCESS" {
+		err = errors.New(resp.ReturnMsg)
+		return
+	}
+	// 校验
+	xmlMap, err := xml2Map(resp)
+	if err != nil {
+		return
+	}
+	sign := makeSign(xmlMap, config.AppSecret)
+	if resp.Sign != sign {
+		err = errors.New("sign err")
+		return
+	}
+}
