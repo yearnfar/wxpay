@@ -16,7 +16,7 @@ payConfig := &wxpay.WxPayConfig{
 
 // 统一下单
 params := map[string]string{
-  "out_trade_no": "1006010215040000",  // 商户订单号
+  "out_trade_no": "1000000000000",  // 商户订单号
 	"body":         "test",  // 商品描述
 	"total_fee":    "100",   // 100分 = 1元
 }
@@ -30,7 +30,7 @@ resp, err := wxpay.OrderQuery(payConfig, params)
 
 // 关闭订单
 params := map[string]string{
-	"out_trade_no": "1310001417536",
+	"out_trade_no": "1000000000000",
 }
 resp, err := wxpay.CloseOrder(payConfig, params)
 
@@ -42,7 +42,7 @@ tlsConfig, err := NewWxPayTlsConfig(
 )
 
 params := map[string]string{
-	"out_trade_no":  "11111111111111",
+	"out_trade_no":  "1000000000000",
 	"out_refund_no": fmt.Sprintf("%d", time.Now().Unix()),
 	"total_fee":     "100",
 	"refund_fee":    "100",
@@ -52,7 +52,7 @@ resp, err := wxpay.Refund(payConfig, params)
 
 // 查询退款
 params := map[string]string{
-	"out_trade_no": "222222222222222",
+	"out_trade_no": "1000000000000",
 }
 resp, err := wxpay.RefundQuery(payConfig, params)
 
