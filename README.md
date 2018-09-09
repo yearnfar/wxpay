@@ -33,7 +33,7 @@ cfg := &wxpay.Config{
 		ServerAddr: "192.168.1.101",     // 当前服务器ip地址
 	}
 
-prepayID, err := wxpay.App(cfg, "APP支付测试", "100000000001", 1, "114.114.114.114")
+prepayID, err := wxpay.AppTrade(cfg, "APP支付测试", "100000000001", 1, "114.114.114.114")
 ```
 
 ### 公众号支付 JSAPITrade
