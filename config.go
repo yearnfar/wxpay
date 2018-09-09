@@ -18,8 +18,8 @@ type Config struct {
 	Timeout    time.Duration // 请求超时时间
 }
 
-// LoadTLSFile 载入tls证书
-func (c *Config) LoadTLSFile(crtFile, keyFile string) error {
+// LoadTLSConfig 载入tls证书
+func (c *Config) LoadTLSConfig(crtFile, keyFile string) error {
 	cert, err := tls.LoadX509KeyPair(crtFile, keyFile)
 	if err != nil {
 		return err
