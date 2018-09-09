@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"net/http"
 )
 
@@ -73,8 +72,6 @@ func NewRequest(method string, urlStr string, param Parameter, key string) (*htt
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("xml: %s\n", string(data))
 
 	req, err := http.NewRequest(method, urlStr, bytes.NewBuffer(data))
 	if err != nil {

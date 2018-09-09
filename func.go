@@ -108,8 +108,6 @@ func makeSign(data []byte, key string) (signStr string, err error) {
 
 	buf.WriteString("key=" + key)
 
-	fmt.Printf("sign-text: %s\n", buf.String())
-
 	signStr = fmt.Sprintf("%X", md5.Sum(buf.Bytes()))
 	return
 }
