@@ -9,7 +9,7 @@
 ### 统一下单 UnifiedOrder
 
 ```
-cfg := &Config{
+cfg := &wxpay.Config{
 		AppID:      "wx11111111111",     // 微信分配的公众账号ID（企业号corpid即为此appId）
 		MchID:      "138888888",         // 微信支付分配的商户号
 		TradeType:  "NATIVE",            // 支付方式
@@ -24,7 +24,7 @@ resp, err := wxpay.UnifiedOrder(cfg, "统一下单测试", "110000000001", 1, ""
 ### APP支付 AppTrade
 
 ```
-cfg := &Config{
+cfg := &wxpay.Config{
 		AppID:      "wx11111111111",     // 微信分配的公众账号ID（企业号corpid即为此appId）
 		MchID:      "138888888",         // 微信支付分配的商户号
 		TradeType:  "APP",            // 支付方式
@@ -39,7 +39,7 @@ prepayID, err := wxpay.App(cfg, "APP支付测试", "100000000001", 1, "114.114.1
 ### 公众号支付 JSAPITrade
 
 ```
-cfg := &Config{
+cfg := &wxpay.Config{
 		AppID:      "wx11111111111",     // 微信分配的公众账号ID（企业号corpid即为此appId）
 		MchID:      "138888888",         // 微信支付分配的商户号
 		TradeType:  "JSAPI",            // 支付方式
@@ -55,7 +55,7 @@ prepayID, err := wxpay.JSAPITrade(cfg, "公众号支付测试", "100000000001", 
 ### 扫码支付 NativeTrade
 
 ```
-cfg := &Config{
+cfg := &wxpay.Config{
 		AppID:      "wx11111111111",     // 微信分配的公众账号ID（企业号corpid即为此appId）
 		MchID:      "138888888",         // 微信支付分配的商户号
 		TradeType:  "NATIVE",            // 支付方式
