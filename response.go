@@ -10,7 +10,6 @@ import (
 // Responser 验证
 type Responser interface {
 	CheckReturn() error
-	CheckSign(data []byte, key string) error
 }
 
 // Response 业务返回
@@ -38,25 +37,7 @@ func (r Response) CheckReturn() error {
 	return nil
 }
 
-// CheckSign 验证sign
-func (r Response) CheckSign(data []byte, key string) error {
-	if r.Sign == "" {
-		return errors.New("sign为空")
-	}
-
-	sign, err := makeSign(data, key)
-	if err != nil {
-		return err
-	}
-
-	if r.Sign != sign {
-		return errors.New("sign错误")
-	}
-
-	return nil
-}
-
-// IsResultOK 返回成
+// IsResultOK 返回成功
 func (r Response) IsResultOK() bool {
 	return r.ResultCode == "SUCCESS"
 }
@@ -64,22 +45,32 @@ func (r Response) IsResultOK() bool {
 // ParseResponse 解析返回数据
 func ParseResponse(response *http.Response, resp Responser, key string) error {
 	defer response.Body.Close()
-	xmlBody, err := ioutil.ReadAll(response.Body)
+	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return err
 	}
 
-	err = xml.Unmarshal(xmlBody, &resp)
+	err = parseResponse(data, resp, key)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 解析xml数据
+func parseResponse(data []byte, resp Responser, key string) error {
+	err := checkXMLSign(data, key)
+	if err != nil {
+		return err
+	}
+
+	err = xml.Unmarshal(data, &resp)
 	if err != nil {
 		return err
 	}
 
 	err = resp.CheckReturn()
-	if err != nil {
-		return err
-	}
-
-	err = resp.CheckSign(xmlBody, key)
 	if err != nil {
 		return err
 	}

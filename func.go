@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"net/http"
 	"sort"
 	"strings"
 
@@ -40,7 +39,7 @@ func toXML(param Parameter, key string) (data []byte, err error) {
 		return
 	}
 
-	signStr, err := makeSign(data, key)
+	signStr, err := makeXMLSign(data, key)
 	if err != nil {
 		return
 	}
@@ -51,46 +50,54 @@ func toXML(param Parameter, key string) (data []byte, err error) {
 	return
 }
 
-// Send 发送请求
-func Send(client *http.Client, method string, urlStr string, param Parameter, resp Responser, key string) error {
-	req, err := NewRequest(method, urlStr, param, key)
+// checkXMLSign 校验xml数据有效性
+func checkXMLSign(data []byte, key string) error {
+	xmlMap, err := mxj.NewMapXml(data)
 	if err != nil {
 		return err
 	}
 
-	response, err := client.Do(req)
-	if err != nil {
-		return err
+	dataMap, ok := xmlMap["xml"].(map[string]interface{})
+	if !ok {
+		return errors.New("非法xml")
 	}
 
-	err = ParseResponse(response, resp, key)
-	if err != nil {
-		return err
+	signStr, ok := dataMap["sign"].(string)
+	if !ok {
+		return errors.New("无sign值")
+	}
+
+	sign := makeSign(dataMap, key)
+	if signStr != sign {
+		return errors.New("sign错误")
 	}
 
 	return nil
 }
 
-// 生成sign
-func makeSign(data []byte, key string) (signStr string, err error) {
+// makeXMLSign 生成xml数据的sign值
+func makeXMLSign(data []byte, key string) (signStr string, err error) {
 	xmlMap, err := mxj.NewMapXml(data)
 	if err != nil {
-		return
+		return "", err
 	}
 
 	dataMap, ok := xmlMap["xml"].(map[string]interface{})
 	if !ok {
-		err = errors.New("非法xml")
-		return
+		return "", errors.New("非法xml")
 	}
 
+	return makeSign(dataMap, key), nil
+}
+
+// 生成sign值
+func makeSign(m map[string]interface{}, key string) string {
 	var keys []string
-	for k := range dataMap {
+	for k := range m {
 		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
-
 	buf := new(bytes.Buffer)
 
 	for _, k := range keys {
@@ -98,7 +105,7 @@ func makeSign(data []byte, key string) (signStr string, err error) {
 			continue
 		}
 
-		v := fmt.Sprint(dataMap[k])
+		v := fmt.Sprint(m[k])
 		if v == "" {
 			continue
 		}
@@ -107,7 +114,5 @@ func makeSign(data []byte, key string) (signStr string, err error) {
 	}
 
 	buf.WriteString("key=" + key)
-
-	signStr = fmt.Sprintf("%X", md5.Sum(buf.Bytes()))
-	return
+	return fmt.Sprintf("%X", md5.Sum(buf.Bytes()))
 }
