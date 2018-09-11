@@ -2,6 +2,8 @@
 
 微信支付Golang sdk v2版
 
+[微信支付Golang sdk v1版](https://github.com/yearnfar/wxpay/tree/v1.0.0)
+
 # 使用方法：
 
 ## 支付
